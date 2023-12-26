@@ -7,43 +7,49 @@
       <input v-model="email" class="email" type="email" name="email" placeholder="メールアドレス" />
       <input v-model="password" class="password" type="password" name="password" placeholder="パスワード" />
       <button @click="register" class="register-btn">新規登録</button>
+      <div class="nav">
+          <p class="nav-message">アカウントをお持ちの方はこちらから</p>
+          <NuxtLink to="/auth/login" class="nav-link">ログイン</NuxtLink>
+      </div>
     </div>
+    <AuthFooter></AuthFooter>
   </div>
 </template>
 
 <script>
-export default {
-  auth: false,
-  data() {
-    return {
-      name: "",
-      email: "",
-      password: "",
-    };
-  },
-  methods: {
-    async register() {
-      const registerData = {
-        name: this.name,
-        email: this.email,
-        password: this.password,
+  import '~/assets/css/register.css'
+  export default {
+    auth: false,
+    data() {
+      return {
+        name: "",
+        email: "",
+        password: "",
       };
-
-      try {
-        await this.$axios.get("sanctum/csrf-cookie");
-        const url = `/api/auth/register`
-        await this.$axios.post(url, registerData)
-        .then(() => {
-            // 新規登録に成功したら、/にページ遷移
-            window.alert("新規登録に成功しました");
-            this.$router.push("/auth/login");
-        });
-      } catch (error) {
-          // 新規登録に失敗したら、コンソールに出力する
-          window.alert("新規登録失敗");
-          console.log(error);
-      }
     },
-  },
-};
+    methods: {
+      async register() {
+        const registerData = {
+          name: this.name,
+          email: this.email,
+          password: this.password,
+        };
+
+        try {
+          await this.$axios.get("sanctum/csrf-cookie");
+          const url = `/api/auth/register`
+          await this.$axios.post(url, registerData)
+          .then(() => {
+              // 新規登録に成功したら、/にページ遷移
+              window.alert("新規登録に成功しました");
+              this.$router.push("/auth/login");
+          });
+        } catch (error) {
+            // 新規登録に失敗したら、コンソールに出力する
+            window.alert("新規登録失敗");
+            console.log(error);
+        }
+      },
+    },
+  };
 </script>
