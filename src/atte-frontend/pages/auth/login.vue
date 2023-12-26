@@ -3,9 +3,17 @@
     <AuthHeader></AuthHeader>
     <div class="login__container">
       <h1 class="login-title">ログイン</h1>
-      <input v-model="email" class="email" type="email" name="email" placeholder="メールアドレス" />
-      <input v-model="password" class="password" type="password" name="password" placeholder="パスワード" />
-      <button @click="login" class="login-btn">ログイン</button>
+      <validation-observer ref="obs" v-slot="ObserverProps">
+        <validation-provider v-slot="{ errors }" rules="required">
+          <input v-model="email" class="email" type="email" name="email" placeholder="メールアドレス" />
+          <div class="error">{{ errors[0] }}</div>
+        </validation-provider>
+        <validation-provider v-slot="{ errors }" rules="required">
+          <input v-model="password" class="password" type="password" name="password" placeholder="パスワード" />
+          <div class="error">{{ errors[0] }}</div>
+        </validation-provider>
+        <button @click="login" class="login-btn" :disabled="ObserverProps.invalid || !ObserverProps.validated">ログイン</button>
+      </validation-observer>
       <div class="nav">
           <p class="nav-message">アカウントをお持ちでない方はこちらから</p>
           <NuxtLink to="/auth/register" class="nav-link">新規登録</NuxtLink>

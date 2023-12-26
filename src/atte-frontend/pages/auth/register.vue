@@ -3,10 +3,25 @@
     <AuthHeader></AuthHeader>
     <div class="register__container">
       <h1 class="register-title">新規登録</h1>
-      <input v-model="name" class="name" type="text" name="name" placeholder="ユーザーネーム" />
-      <input v-model="email" class="email" type="email" name="email" placeholder="メールアドレス" />
-      <input v-model="password" class="password" type="password" name="password" placeholder="パスワード" />
-      <button @click="register" class="register-btn">新規登録</button>
+      <validation-observer ref="obs" v-slot="ObserverProps">
+        <validation-provider v-slot="{ errors }" rules="required|max:20">
+          <input v-model="name" class="name" type="text" name="name" placeholder="ユーザーネーム" />
+          <div class="error">{{ errors[0] }}</div>
+        </validation-provider>
+        <validation-provider v-slot="{ errors }" rules="required|email">
+          <input v-model="email" class="email" type="email" name="email" placeholder="メールアドレス" />
+          <div class="error">{{ errors[0] }}</div>
+        </validation-provider>
+        <validation-provider v-slot="{ errors }" rules="required|min:8|alpha_num" vid="passwordConfirm">
+          <input v-model="password" class="password" type="password" name="password" placeholder="パスワード" />
+          <div class="error">{{ errors[0] }}</div>
+        </validation-provider>
+        <validation-provider v-slot="{ errors }" rules="confirmed:passwordConfirm">
+          <input v-model="passwordConfirm" class="confirmed-password" type="password" name="passwordConfirm" placeholder="確認用パスワード" />
+          <div class="error">{{ errors[0] }}</div>
+        </validation-provider>
+        <button @click="register" class="register-btn" :disabled="ObserverProps.invalid || !ObserverProps.validated">新規登録</button>
+      </validation-observer>
       <div class="nav">
           <p class="nav-message">アカウントをお持ちの方はこちらから</p>
           <NuxtLink to="/auth/login" class="nav-link">ログイン</NuxtLink>
@@ -25,6 +40,7 @@
         name: "",
         email: "",
         password: "",
+        passwordConfirm: "",
       };
     },
     methods: {
