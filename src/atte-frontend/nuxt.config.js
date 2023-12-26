@@ -41,15 +41,51 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    "@nuxtjs/auth-next",
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: '/',
+    baseURL: process.env.BASE_URL,
+    credentials: true,
+    proxy: true,
+  },
+
+  proxy: {
+    '/api': 'http://localhost:8000',
+    '/sanctum': 'http://localhost:8000',
+  },
+
+  auth: {
+    strategies: {
+      laravelSanctum: {
+        provider: 'laravel/sanctum',
+        url: 'http://localhost:8000',
+        endpoints: {
+          login: {
+            url: '/api/auth/login',
+          },
+          logout: {
+            url: '/api/auth/logout',
+          },
+          user: {
+            url: '/api/user',
+          },
+        },
+      },
+    },
+    redirect: {
+      login: '/auth/login',
+    },
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-  }
+  },
+
+  router: {
+    mode: "hash",
+    middleware: ['auth']
+  },
 }
